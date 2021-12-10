@@ -8,6 +8,7 @@ const getInputs = () => {
   const updateTemplate =
     core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
   const prependNewline = Boolean(core.getInput("prepend-newline") !== "false");
+  const removeRegex = core.getInput("remove-regex");
   const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
   const repoTokenUserLogin = core.getInput("repo-token-user-login");
 
@@ -27,12 +28,20 @@ const getInputs = () => {
     update,
     updateTemplate,
     prependNewline,
+    removeRegex,
     repoToken,
     repoTokenUserLogin,
   };
 };
 
 const wrapId = (identifier: string) => `<!-- ${identifier} -->`;
+
+const toRegex = (str: string) => {
+  const main = str.match(/\/(.+)\/.*/)![1];
+  const options = str.match(/\/.+\/(.*)/)![1];
+
+  return new RegExp(main, options);
+};
 
 const findExistingComment = async (
   inputs: ReturnType<typeof getInputs>,
@@ -69,13 +78,13 @@ const updateComment = async (
       )
     : comment.body + (inputs.prependNewline ? "\n" : "") + inputs.update;
 
-  console.log("new body is", body);
-
   await octokit.issues.updateComment({
     owner,
     repo,
     comment_id: comment.id,
-    body,
+    body: inputs.removeRegex
+      ? body.replace(toRegex(inputs.removeRegex), "")
+      : body,
   });
 };
 

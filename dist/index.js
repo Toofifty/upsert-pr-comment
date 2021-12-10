@@ -866,6 +866,7 @@ const getInputs = () => {
     const update = core.getInput("update");
     const updateTemplate = core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
     const prependNewline = Boolean(core.getInput("prepend-newline") !== "false");
+    const removeRegex = core.getInput("remove-regex");
     const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
     const repoTokenUserLogin = core.getInput("repo-token-user-login");
     if (!insert && !update) {
@@ -880,11 +881,17 @@ const getInputs = () => {
         update,
         updateTemplate,
         prependNewline,
+        removeRegex,
         repoToken,
         repoTokenUserLogin,
     };
 };
 const wrapId = (identifier) => `<!-- ${identifier} -->`;
+const toRegex = (str) => {
+    const main = str.match(/\/(.+)\/.*/)[1];
+    const options = str.match(/\/.+\/(.*)/)[1];
+    return new RegExp(main, options);
+};
 const findExistingComment = async (inputs, owner, repo, issue) => {
     const octokit = github.getOctokit(inputs.repoToken);
     const { data: comments } = await octokit.issues.listComments({
@@ -901,12 +908,13 @@ const updateComment = async (comment, inputs, owner, repo) => {
             (inputs.prependNewline ? "\n" : "") +
             inputs.update)
         : comment.body + (inputs.prependNewline ? "\n" : "") + inputs.update;
-    console.log("new body is", body);
     await octokit.issues.updateComment({
         owner,
         repo,
         comment_id: comment.id,
-        body,
+        body: inputs.removeRegex
+            ? body.replace(toRegex(inputs.removeRegex), "")
+            : body,
     });
 };
 const createComment = async (inputs, owner, repo, issue) => {
