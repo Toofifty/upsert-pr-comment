@@ -1,0 +1,27 @@
+name: "Upsert PR Comment"
+description: "Add or update a comment on a pull request"
+inputs:
+  identifier:
+    description: "Unique identifier for the message. Can be literally anything unique"
+    required: true
+  insert:
+    description: "Initial message to print. Use <!-- UPDATE_TEMPLATE --> to designate where updated content will go"
+    required: false
+  update:
+    description: "Content to place into templated area on subsequent runs. If there is no template, it will replace the initial message"
+    required: false
+  update-template:
+    description: "Template marker for updates. Defaults to `<!-- UPDATE_TEMPLATE -->`"
+    required: false
+  repo-token:
+    description: "A GitHub token for API access."
+    required: false
+  repo-token-user-login:
+    description: "A user login associated with your token, for temporary repo tokens this is `github-actions[bot]`."
+    required: false
+branding:
+  icon: message-circle
+  color: blue
+runs:
+  using: "node16"
+  main: "dist/index.js"
