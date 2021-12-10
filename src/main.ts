@@ -1,13 +1,15 @@
-import core from "@actions/core";
-import github from "@actions/github";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
 
 const getInputs = () => {
   const identifier = core.getInput("identifier");
   const insert = core.getInput("insert");
   const update = core.getInput("update");
   const updateTemplate =
-    core.getInput("update-template") ?? "<!-- UPDATE_TEMPLATE -->";
-  const repoToken = core.getInput("repo-token") ?? process.env.GITHUB_TOKEN;
+    core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
+  const prependNewline = Boolean(core.getInput("prepend-newline") !== "false");
+  const removeRegex = core.getInput("remove-regex");
+  const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
   const repoTokenUserLogin = core.getInput("repo-token-user-login");
 
   if (!insert && !update) {
@@ -25,12 +27,21 @@ const getInputs = () => {
     insert,
     update,
     updateTemplate,
+    prependNewline,
+    removeRegex,
     repoToken,
     repoTokenUserLogin,
   };
 };
 
 const wrapId = (identifier: string) => `<!-- ${identifier} -->`;
+
+const toRegex = (str: string) => {
+  const main = str.match(/\/(.+)\/.*/)![1];
+  const options = str.match(/\/.+\/(.*)/)![1];
+
+  return new RegExp(main, options);
+};
 
 const findExistingComment = async (
   inputs: ReturnType<typeof getInputs>,
@@ -58,12 +69,18 @@ const updateComment = async (
 ) => {
   const octokit = github.getOctokit(inputs.repoToken);
 
-  const body = comment.body.includes(inputs.updateTemplate)
-    ? comment.body.replace(
+  const cleanedBody = inputs.removeRegex
+    ? comment.body.replace(toRegex(inputs.removeRegex), "")
+    : comment.body;
+
+  const body = cleanedBody.includes(inputs.updateTemplate)
+    ? cleanedBody.replace(
         inputs.updateTemplate,
-        `${inputs.updateTemplate}${inputs.update}`
+        inputs.updateTemplate +
+          (inputs.prependNewline ? "\n" : "") +
+          inputs.update
       )
-    : `${comment.body}\n${inputs.update}`;
+    : cleanedBody + (inputs.prependNewline ? "\n" : "") + inputs.update;
 
   await octokit.issues.updateComment({
     owner,
@@ -113,10 +130,14 @@ const main = async () => {
   }
 };
 
-export default async (): Promise<void> => {
+const run = async (): Promise<void> => {
   try {
     await main();
   } catch (error: any) {
     core.setFailed(error.message);
   }
 };
+
+run();
+
+export default run;

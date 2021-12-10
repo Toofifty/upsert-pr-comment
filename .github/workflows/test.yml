@@ -3,7 +3,6 @@ name: Test comment
 on:
   pull_request:
 
-
 jobs:
   dogfood:
     name: Dogfood
@@ -15,10 +14,12 @@ jobs:
         uses: ./
         with:
           identifier: upsert-test
-          insert: 
+          insert: |
             Hello! Here's all the commits that have been made to this branch
             <!-- UPDATE_TEMPLATE -->
             * ${{ github.sha }} (latest)
-          update:
+          update: |
             * ${{ github.sha }} (latest)
-          remove-regex: /\(latest\)/
+          remove-regex: "/\\(latest\\)/gi"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
