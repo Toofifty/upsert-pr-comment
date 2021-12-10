@@ -10,6 +10,9 @@ inputs:
   update:
     description: "Content to place into templated area on subsequent runs. If there is no template, it will replace the initial message"
     required: false
+  remove-regex:
+    description: "Regex containing a text pattern to remove when updating a comment"
+    required: false
   update-template:
     description: "Template marker for updates. Defaults to `<!-- UPDATE_TEMPLATE -->`"
     required: false

@@ -1,0 +1,24 @@
+name: Test comment
+
+on:
+  pull_request:
+
+
+jobs:
+  dogfood:
+    name: Dogfood
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Upsert comment
+        uses: ./
+        with:
+          identifier: upsert-test
+          insert: 
+            Hello! Here's all the commits that have been made to this branch
+            <!-- UPDATE_TEMPLATE -->
+            * ${{ github.sha }} (latest)
+          update:
+            * ${{ github.sha }} (latest)
+          remove-regex: /\(latest\)/

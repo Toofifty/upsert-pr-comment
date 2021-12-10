@@ -1,6 +1,5 @@
 import core from "@actions/core";
-import github, { getOctokit } from "@actions/github";
-import { HttpClient } from "@actions/http-client";
+import github from "@actions/github";
 
 const getInputs = () => {
   const identifier = core.getInput("identifier");
@@ -60,7 +59,10 @@ const updateComment = async (
   const octokit = github.getOctokit(inputs.repoToken);
 
   const body = comment.body.includes(inputs.updateTemplate)
-    ? comment.body.replace(inputs.updateTemplate, inputs.update)
+    ? comment.body.replace(
+        inputs.updateTemplate,
+        `${inputs.updateTemplate}${inputs.update}`
+      )
     : `${comment.body}\n${inputs.update}`;
 
   await octokit.issues.updateComment({
