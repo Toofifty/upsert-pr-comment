@@ -18,7 +18,7 @@ jobs:
             Hello! Here's all the commits that have been made to this branch
             <!-- UPDATE_TEMPLATE -->
             * ${{ github.sha }} (latest)
-          update: "\n* ${{ github.sha }} (latest)"
+          update: "\n\n* ${{ github.sha }} (latest)"
           remove-regex: "/\\(latest\\)/"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
