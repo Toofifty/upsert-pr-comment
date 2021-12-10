@@ -113,10 +113,14 @@ const main = async () => {
   }
 };
 
-export default async (): Promise<void> => {
+const run = async (): Promise<void> => {
   try {
     await main();
   } catch (error: any) {
     core.setFailed(error.message);
   }
 };
+
+run();
+
+export default run;
