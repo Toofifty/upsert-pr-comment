@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  dogfood:
+  dogfood-append-sha:
     name: Dogfood
     runs-on: ubuntu-latest
     steps:
@@ -13,7 +13,7 @@ jobs:
       - name: Upsert comment
         uses: ./
         with:
-          identifier: upsert-test
+          identifier: upsert-append-test
           insert: |
             Hello! Here's all the commits that have been made to this branch
             <!-- UPDATE_TEMPLATE -->
@@ -21,5 +21,21 @@ jobs:
           update: |
             * ${{ github.sha }} (latest)
           remove-regex: "/\\(latest\\)/gi"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  dogfood-replace-sha:
+    name: Dogfood (replace)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Upsert comment
+        uses: ./
+        with:
+          identifier: upsert-replace-test
+          insert: |
+            Hello! Here's the most recent commit to this branch:
+            * ${{ github.sha }} (latest)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

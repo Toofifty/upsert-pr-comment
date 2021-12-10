@@ -869,9 +869,6 @@ const getInputs = () => {
     const removeRegex = core.getInput("remove-regex");
     const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
     const repoTokenUserLogin = core.getInput("repo-token-user-login");
-    if (!insert && !update) {
-        throw new Error("No insert or update specified. Nothing to do");
-    }
     if (!repoToken) {
         throw new Error("No repo token specified, please set the GITHUB_TOKEN env variable");
     }
@@ -910,7 +907,7 @@ const updateComment = async (comment, inputs, owner, repo) => {
         ? cleanedBody.replace(inputs.updateTemplate, inputs.updateTemplate +
             (inputs.prependNewline ? "\n" : "") +
             inputs.update)
-        : cleanedBody + (inputs.prependNewline ? "\n" : "") + inputs.update;
+        : inputs.update || inputs.insert;
     await octokit.issues.updateComment({
         owner,
         repo,
