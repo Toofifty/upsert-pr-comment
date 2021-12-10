@@ -19,6 +19,7 @@ jobs:
             <!-- UPDATE_TEMPLATE -->
             * ${{ github.sha }} (latest)
           update: |
+          
             * ${{ github.sha }} (latest)
           remove-regex: "/\\(latest\\)/"
         env:
