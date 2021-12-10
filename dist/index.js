@@ -861,12 +861,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
 const getInputs = () => {
-    var _a, _b;
     const identifier = core.getInput("identifier");
     const insert = core.getInput("insert");
     const update = core.getInput("update");
-    const updateTemplate = (_a = core.getInput("update-template")) !== null && _a !== void 0 ? _a : "<!-- UPDATE_TEMPLATE -->";
-    const repoToken = (_b = core.getInput("repo-token")) !== null && _b !== void 0 ? _b : process.env.GITHUB_TOKEN;
+    const updateTemplate = core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
+    const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
     const repoTokenUserLogin = core.getInput("repo-token-user-login");
     if (!insert && !update) {
         throw new Error("No insert or update specified. Nothing to do");

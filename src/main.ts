@@ -6,8 +6,8 @@ const getInputs = () => {
   const insert = core.getInput("insert");
   const update = core.getInput("update");
   const updateTemplate =
-    core.getInput("update-template") ?? "<!-- UPDATE_TEMPLATE -->";
-  const repoToken = core.getInput("repo-token") ?? process.env.GITHUB_TOKEN;
+    core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
+  const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
   const repoTokenUserLogin = core.getInput("repo-token-user-login");
 
   if (!insert && !update) {
