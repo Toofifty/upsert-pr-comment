@@ -903,18 +903,19 @@ const findExistingComment = async (inputs, owner, repo, issue) => {
 };
 const updateComment = async (comment, inputs, owner, repo) => {
     const octokit = github.getOctokit(inputs.repoToken);
-    const body = comment.body.includes(inputs.updateTemplate)
-        ? comment.body.replace(inputs.updateTemplate, inputs.updateTemplate +
+    const cleanedBody = inputs.removeRegex
+        ? comment.body.replace(toRegex(inputs.removeRegex), "")
+        : comment.body;
+    const body = cleanedBody.includes(inputs.updateTemplate)
+        ? cleanedBody.replace(inputs.updateTemplate, inputs.updateTemplate +
             (inputs.prependNewline ? "\n" : "") +
             inputs.update)
-        : comment.body + (inputs.prependNewline ? "\n" : "") + inputs.update;
+        : cleanedBody + (inputs.prependNewline ? "\n" : "") + inputs.update;
     await octokit.issues.updateComment({
         owner,
         repo,
         comment_id: comment.id,
-        body: inputs.removeRegex
-            ? body.replace(toRegex(inputs.removeRegex), "")
-            : body,
+        body,
     });
 };
 const createComment = async (inputs, owner, repo, issue) => {
