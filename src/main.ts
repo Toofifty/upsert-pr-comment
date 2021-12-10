@@ -76,7 +76,7 @@ const updateComment = async (
           (inputs.prependNewline ? "\n" : "") +
           inputs.update
       )
-    : inputs.update ?? inputs.insert;
+    : inputs.update || inputs.insert;
 
   await octokit.issues.updateComment({
     owner,

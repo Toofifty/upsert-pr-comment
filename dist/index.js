@@ -899,7 +899,6 @@ const findExistingComment = async (inputs, owner, repo, issue) => {
     return comments.find((comment) => { var _a; return (_a = comment.body) === null || _a === void 0 ? void 0 : _a.includes(wrapId(inputs.identifier)); });
 };
 const updateComment = async (comment, inputs, owner, repo) => {
-    var _a;
     const octokit = github.getOctokit(inputs.repoToken);
     const cleanedBody = inputs.removeRegex
         ? comment.body.replace(toRegex(inputs.removeRegex), "")
@@ -908,7 +907,7 @@ const updateComment = async (comment, inputs, owner, repo) => {
         ? cleanedBody.replace(inputs.updateTemplate, inputs.updateTemplate +
             (inputs.prependNewline ? "\n" : "") +
             inputs.update)
-        : (_a = inputs.update) !== null && _a !== void 0 ? _a : inputs.insert;
+        : inputs.update || inputs.insert;
     await octokit.issues.updateComment({
         owner,
         repo,
