@@ -7,6 +7,7 @@ const getInputs = () => {
   const update = core.getInput("update");
   const updateTemplate =
     core.getInput("update-template") || "<!-- UPDATE_TEMPLATE -->";
+  const prependNewline = Boolean(core.getInput("prepend-newline") !== "false");
   const repoToken = core.getInput("repo-token") || process.env.GITHUB_TOKEN;
   const repoTokenUserLogin = core.getInput("repo-token-user-login");
 
@@ -25,6 +26,7 @@ const getInputs = () => {
     insert,
     update,
     updateTemplate,
+    prependNewline,
     repoToken,
     repoTokenUserLogin,
   };
@@ -61,9 +63,13 @@ const updateComment = async (
   const body = comment.body.includes(inputs.updateTemplate)
     ? comment.body.replace(
         inputs.updateTemplate,
-        `${inputs.updateTemplate}${inputs.update}`
+        inputs.updateTemplate +
+          (inputs.prependNewline ? "\n" : "") +
+          inputs.update
       )
-    : `${comment.body}\n${inputs.update}`;
+    : comment.body + (inputs.prependNewline ? "\n" : "") + inputs.update;
+
+  console.log("new body is", body);
 
   await octokit.issues.updateComment({
     owner,
