@@ -915,7 +915,7 @@ const main = async () => {
         await createComment(inputs, owner, repo, issueNumber);
     }
 };
-exports.default = async () => {
+const run = async () => {
     try {
         await main();
     }
@@ -923,6 +923,8 @@ exports.default = async () => {
         core_1.default.setFailed(error.message);
     }
 };
+run();
+exports.default = run;
 
 
 /***/ }),
