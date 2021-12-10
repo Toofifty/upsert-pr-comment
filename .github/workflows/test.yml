@@ -21,3 +21,5 @@ jobs:
           update: |
             * ${{ github.sha }} (latest)
           remove-regex: "/\\(latest\\)/"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
