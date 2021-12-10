@@ -2,4 +2,4 @@
 
 Create & update PR comments via a Github action.
 
-// TODO
+// TODO: write readme
