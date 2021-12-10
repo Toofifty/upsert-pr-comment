@@ -6,7 +6,7 @@ inputs:
     required: true
   insert:
     description: "Initial message to print. Use <!-- UPDATE_TEMPLATE --> to designate where updated content will go"
-    required: false
+    required: true
   update:
     description: "Content to place into templated area on subsequent runs. If there is no template, it will replace the initial message"
     required: false
