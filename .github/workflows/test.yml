@@ -18,8 +18,7 @@ jobs:
             Hello! Here's all the commits that have been made to this branch
             <!-- UPDATE_TEMPLATE -->
             * ${{ github.sha }} (latest)
-          update: |
-          
+          update: >
             * ${{ github.sha }} (latest)
           remove-regex: "/\\(latest\\)/"
         env:
