@@ -907,7 +907,7 @@ const updateComment = async (comment, inputs, owner, repo) => {
         ? cleanedBody.replace(inputs.updateTemplate, inputs.updateTemplate +
             (inputs.prependNewline ? "\n" : "") +
             inputs.update)
-        : inputs.update || inputs.insert;
+        : `${wrapId(inputs.identifier)}\n${inputs.update || inputs.insert}`;
     await octokit.issues.updateComment({
         owner,
         repo,
@@ -921,7 +921,7 @@ const createComment = async (inputs, owner, repo, issue) => {
         owner,
         repo,
         issue_number: issue,
-        body: `${wrapId(inputs.identifier)}${inputs.insert}`,
+        body: `${wrapId(inputs.identifier)}\n${inputs.insert}`,
     });
 };
 const main = async () => {
